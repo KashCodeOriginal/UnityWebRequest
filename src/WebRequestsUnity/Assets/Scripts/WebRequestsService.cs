@@ -22,17 +22,24 @@ public class WebRequestsService : IWebRequestsService
         _coroutineRunner.StartCoroutine(GetWebRequest(url, Success));
     }
 
-    private void Success(List<Post> posts)
+    private void Success(DB db)
     {
         _uiFactory.ClearText();
-        
-        foreach (var post in posts)
+
+        var profileName = db.profile;
+
+        foreach (var post in db.posts)
         {
-            _uiFactory.CreateText($"{post.id}: {post.title}");
+            _uiFactory.CreateText($"{profileName.name}: posted {post.title}, with id: {post.id}");
+        }
+
+        foreach (var comment in db.comments)
+        {
+            _uiFactory.CreateText($"Post id: {comment.id}, with comment id: {comment.postId}, with text: {comment.body}");
         }
     }
 
-    private IEnumerator GetWebRequest(string url, Action<List<Post>> success)
+    private IEnumerator GetWebRequest(string url, Action<DB> success)
     {
         var webRequest = UnityWebRequest.Get(url);
         
@@ -46,7 +53,7 @@ public class WebRequestsService : IWebRequestsService
             case UnityWebRequest.Result.Success:
                 _loggerService.PrintInfo(nameof(WebRequestsService), "WebRequest get success");
                 
-                var post = JsonConvert.DeserializeObject<List<Post>>(webRequest.downloadHandler.text);
+                var post = JsonConvert.DeserializeObject<DB>(webRequest.downloadHandler.text);
 
                 success?.Invoke(post);
 
