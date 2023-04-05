@@ -9,7 +9,7 @@ public class Bootstrap : MonoBehaviour, ICoroutineRunner
     [SerializeField] private Button _refreshButton;
 
     private IWebRequestsService _webRequestsService;
-
+    
     private void Awake()
     {
         _refreshButton.onClick.AddListener(RefreshData);
@@ -17,7 +17,7 @@ public class Bootstrap : MonoBehaviour, ICoroutineRunner
 
     private void RefreshData()
     {
-        _webRequestsService.GetRequest("https://my-json-server.typicode.com/typicode/demo/posts");
+        _webRequestsService.GetRequest(Constants.SERVER_URL);
     }
 
     private void Start()
